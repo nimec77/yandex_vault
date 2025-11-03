@@ -1,4 +1,5 @@
 mod vault;
+mod server;
 
 
 fn main() {
