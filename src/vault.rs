@@ -87,4 +87,25 @@ impl Vault {
             .or_insert_with(|| Cell::new(cell_capacity));
         cell.put_item(item).map_err(|_| VaultError::CellFull)
     }
+
+    pub fn get(&self, id: u32) -> Result<Option<String>, VaultError> {
+        match self.cells.get(&id) {
+            Some(cell) => Ok(cell.list_items()),
+            
+            None => Err(VaultError::CellNotFound),
+        }
+    }
+
+    pub fn list(&self) -> Option<String> {
+        if self.cells.is_empty() {
+            None
+        } else {
+            let keys: Vec<String> = self
+            .cells
+            .keys()
+            .map(|id| id.to_string())
+            .collect();
+            Some(format!("Occupied cells: {}\n", keys.join(", ")))
+        }
+    }
 }
