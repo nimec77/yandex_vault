@@ -6,7 +6,9 @@ use std::{
 
 use crate::vault::{Item, Vault, VaultError};
 
-fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
+const MAX_CELL_SIZE: u32 = 100;
+
+pub fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
     let mut writer = stream.try_clone().expect("Failed to clone stream");
     let mut reader = BufReader::new(stream);
 
@@ -41,7 +43,7 @@ fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
                                 size,
                             };
                             let mut v = vault.lock().unwrap();
-                            match v.put(id, item, 100) {
+                            match v.put(id, item, MAX_CELL_SIZE) {
                                 Ok(_) => "OK: item stored\n".to_string(),
                                 Err(VaultError::VaultFull) => "ERROR: vault is full\n".to_string(),
                                 Err(VaultError::CellFull) => "ERROR: cell is full\n".to_string(),

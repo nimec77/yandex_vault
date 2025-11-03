@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::format};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 pub struct Item {
@@ -91,7 +91,7 @@ impl Vault {
     pub fn get(&self, id: u32) -> Result<Option<String>, VaultError> {
         match self.cells.get(&id) {
             Some(cell) => Ok(cell.list_items()),
-            
+
             None => Err(VaultError::CellNotFound),
         }
     }
@@ -100,11 +100,7 @@ impl Vault {
         if self.cells.is_empty() {
             None
         } else {
-            let keys: Vec<String> = self
-            .cells
-            .keys()
-            .map(|id| id.to_string())
-            .collect();
+            let keys: Vec<String> = self.cells.keys().map(|id| id.to_string()).collect();
             Some(format!("Occupied cells: {}\n", keys.join(", ")))
         }
     }
