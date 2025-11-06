@@ -79,6 +79,20 @@ pub fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
                         v.list().unwrap_or_else(|| "Vault is empty\n".to_string())
                     }
 
+                    Some("TAKE") => {
+                        let id = parts.next().and_then(|s| s.parse::<u32>().ok());
+                        let name = parts.next();
+                        if let (Some(id), Some(name)) = (id, name) {
+                            let mut v = vault.lock().unwrap();
+                            v.take(id, name).map_or_else(
+                                |_| "ERROR: item not found\n".to_string(),
+                                |item| format!("OK: taken {} {}\n", item.name, item.size),
+                            )
+                        } else {
+                            "ERROR: usage TAKE <id> <name>\n".to_string()
+                        }
+                    }
+
                     Some("EXIT") => {
                         let _ = writer.write_all(b"Bye!\n");
                         let _ = writer.flush();
