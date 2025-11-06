@@ -21,13 +21,13 @@ fn main() {
                 match handle_connection(stream) {
                     ConnectionResult::Exit => break,
                     ConnectionResult::Lost => {
-                        eprintln!("Connection lost. Retrying...");
+                        eprintln!("Connection lost. Retrying in 2s...");
                         std::thread::sleep(Duration::from_secs(2));
                     }
                 }
             }
             Err(e) => {
-                eprintln!("Connect failed: {}. Retrying in 2s...", e);
+                eprintln!("Connect failed: {e}. Retrying in 2s...");
                 std::thread::sleep(Duration::from_secs(2));
             }
         }

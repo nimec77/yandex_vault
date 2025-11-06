@@ -1,8 +1,10 @@
 use std::{
     io::{BufRead, BufReader, Write},
     net::TcpStream,
-    sync::{Arc, Mutex},
+    sync::{Arc, Mutex}, time::Duration,
 };
+
+use rand::Rng;
 
 use crate::vault::{Item, Vault, VaultError};
 
@@ -15,6 +17,7 @@ pub fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
     let _ = writer.write_all(b"Welcome to the vault!\n");
     let _ = writer.flush();
 
+    let mut rnd = rand::rng();
     let mut line = String::new();
     loop {
         line.clear();
@@ -91,6 +94,12 @@ pub fn handle_client(stream: TcpStream, vault: Arc<Mutex<Vault>>) {
                         } else {
                             "ERROR: usage TAKE <id> <name>\n".to_string()
                         }
+                    }
+
+                    Some("PING") => {
+                        let delay = rnd.random_range(1..=5);
+                        std::thread::sleep(Duration::from_secs(delay));
+                        "PONG\n".to_string()
                     }
 
                     Some("EXIT") => {
